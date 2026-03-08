@@ -110,7 +110,7 @@
       display: grid;
       grid-template-columns: 1.15fr 0.95fr;
       gap: 30px;
-      align-items: stretch;
+      align-items: start;
       z-index: 5;
     }
 
@@ -133,6 +133,9 @@
       place-items: center;
       padding: 28px;
       isolation: isolate;
+      position: sticky;
+      top: 88px;
+      align-self: start;
     }
 
     .ritual-image-panel::before {
@@ -233,11 +236,11 @@
     }
 
     .text-panel {
-      min-height: 520px;
+      min-height: unset;
       padding: 26px 26px 22px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     .eyebrow {
@@ -259,13 +262,7 @@
         0 0 22px rgba(96,215,255,0.18);
     }
 
-    .intro {
-      margin: 0;
-      max-width: 42ch;
-      color: var(--muted);
-      line-height: 1.65;
-      font-size: 16px;
-    }
+    
 
     .terminal {
       position: relative;
@@ -510,6 +507,8 @@
 
       .ritual-image-panel {
         min-height: 420px;
+        position: relative;
+        top: auto;
       }
     }
 
@@ -569,10 +568,7 @@
       <article class="panel text-panel">
         <p class="eyebrow">spell transcript / active terminal</p>
         <h1>Ritual</h1>
-        <p class="intro">
-           Seven Waves. One coin committed to the surf. Channel open.
-        </p>
-
+        
         <section class="terminal" aria-label="Typing ritual text">
           <div class="terminal-header">
             <span>ritual.execute</span>
