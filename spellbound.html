@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,9 +13,7 @@
       --neon-b: #00ff88;
       --neon-c: #60d7ff;
       --text: #dbfff7;
-      --muted: rgba(219, 255, 247, 0.72);
       --border: rgba(140, 255, 228, 0.18);
-      --panel: rgba(2, 8, 7, 0.42);
     }
 
     * { box-sizing: border-box; }
@@ -108,7 +105,7 @@
 
     .timeline-link {
       position: fixed;
-      right: 24px;
+      right: 300px;
       bottom: 24px;
       top: auto;
       z-index: 35;
@@ -179,135 +176,44 @@
       animation: pulseGlow 5s ease-in-out infinite;
     }
 
-    .sea-vignette {
+    .scanline-flash {
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(90deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.36) 22%, transparent 38%),
-        linear-gradient(0deg, rgba(0,0,0,0.48) 0%, transparent 22%);
+      z-index: 15;
       pointer-events: none;
-      z-index: 3;
-    }
-
-    .code-zone {
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 36vw;
-      min-width: 320px;
-      max-width: 620px;
-      height: 100vh;
-      z-index: 10;
-      pointer-events: none;
-      display: flex;
-      align-items: flex-end;
-      padding: 110px 28px 30px 34px;
-      overflow: hidden;
-    }
-
-    .code-zone::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.10) 16%, rgba(0,0,0,0.34) 36%, rgba(0,0,0,0.72) 100%),
-        linear-gradient(90deg, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.78) 46%, rgba(0,0,0,0.26) 100%);
-      z-index: 0;
-    }
-
-    .code-zone::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(circle at 18% 82%, rgba(0,255,136,0.10), transparent 22%),
-        radial-gradient(circle at 26% 70%, rgba(96,215,255,0.08), transparent 18%);
-      filter: blur(24px);
-      z-index: 0;
-      opacity: 0.9;
-    }
-
-    .code-fade {
-      position: absolute;
-      inset: 0;
       background: linear-gradient(
         180deg,
-        rgba(0,0,0,1) 0%,
-        rgba(0,0,0,0.95) 8%,
-        rgba(0,0,0,0.82) 18%,
-        rgba(0,0,0,0.34) 42%,
-        rgba(0,0,0,0.14) 55%,
-        rgba(0,0,0,0.0) 68%,
-        rgba(0,0,0,0.0) 100%
+        transparent 0%,
+        rgba(255,255,255,0.04) 49%,
+        rgba(96,215,255,0.08) 50%,
+        rgba(0,255,136,0.04) 51%,
+        transparent 100%
       );
-      z-index: 2;
+      transform: translateY(-120%);
+      animation: scanFlash 10s linear infinite;
+      opacity: 0.46;
+    }
+
+    .dust {
+      position: absolute;
+      inset: 0;
+      z-index: 16;
       pointer-events: none;
-      mix-blend-mode: multiply;
-    }
-
-    .code-header {
-      position: absolute;
-      left: 34px;
-      bottom: 34px;
-      transform: translateY(calc(-100% - 14px));
-      z-index: 4;
-      color: rgba(219,255,247,0.56);
-      font-size: 11px;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(77,255,218,0.14);
-    }
-
-    .code-stream {
-      position: relative;
-      z-index: 3;
-      width: 100%;
-      height: 100%;
       overflow: hidden;
-      mask-image: linear-gradient(
-        to top,
-        rgba(0,0,0,1) 0%,
-        rgba(0,0,0,1) 35%,
-        rgba(0,0,0,0.65) 48%,
-        rgba(0,0,0,0.14) 58%,
-        rgba(0,0,0,0.0) 66%
-      );
-      -webkit-mask-image: linear-gradient(
-        to top,
-        rgba(0,0,0,1) 0%,
-        rgba(0,0,0,1) 35%,
-        rgba(0,0,0,0.65) 48%,
-        rgba(0,0,0,0.14) 58%,
-        rgba(0,0,0,0.0) 66%
-      );
     }
 
-    .code-lines {
+    .dust i {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      will-change: transform;
+      width: var(--s);
+      height: var(--s);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.84), rgba(77,255,218,0.45) 45%, transparent 72%);
+      left: var(--x);
+      top: var(--y);
+      opacity: 0.14;
+      animation: drift var(--t) linear infinite;
+      animation-delay: var(--d);
     }
-
-    .code-line {
-      font-family: "Courier New", Courier, monospace;
-      font-size: clamp(14px, 1.08vw, 18px);
-      line-height: 1.55;
-      margin: 0;
-      white-space: pre-wrap;
-      word-break: break-word;
-      text-shadow:
-        0 0 10px rgba(77,255,218,0.18),
-        0 0 18px rgba(96,215,255,0.08);
-      animation: lineFlicker 5.8s infinite;
-    }
-
-    .code-line.dim    { color: rgba(210,255,245,0.52); }
-    .code-line.green  { color: rgba(110,255,174,0.92); }
-    .code-line.cyan   { color: rgba(92,229,255,0.94); }
-    .code-line.white  { color: rgba(236,255,251,0.92); }
-    .code-line.alert  { color: rgba(160,255,122,0.92); }
 
     .hud {
       position: absolute;
@@ -334,44 +240,87 @@
       box-shadow: 0 0 18px rgba(96,215,255,0.05);
     }
 
-    .scanline-flash {
+    .code-zone {
       position: absolute;
-      inset: 0;
-      z-index: 15;
-      pointer-events: none;
-      background: linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(255,255,255,0.04) 49%,
-        rgba(96,215,255,0.08) 50%,
-        rgba(0,255,136,0.04) 51%,
-        transparent 100%
-      );
-      transform: translateY(-120%);
-      animation: scanFlash 8.2s linear infinite;
-      opacity: 0.46;
-    }
-
-    .dust {
-      position: absolute;
-      inset: 0;
-      z-index: 16;
+      left: 34px;
+      bottom: 28px;
+      width: min(36vw, 560px);
+      height: 52vh;
+      z-index: 10;
       pointer-events: none;
       overflow: hidden;
     }
 
-    .dust i {
+    .code-header {
       position: absolute;
-      width: var(--s);
-      height: var(--s);
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.84), rgba(77,255,218,0.45) 45%, transparent 72%);
-      left: var(--x);
-      top: var(--y);
-      opacity: 0.14;
-      animation: drift var(--t) linear infinite;
-      animation-delay: var(--d);
+      left: 0;
+      bottom: calc(100% - 18px);
+      z-index: 4;
+      color: rgba(219,255,247,0.56);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(77,255,218,0.14);
     }
+
+    .code-stream {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
+      mask-image: linear-gradient(
+        to top,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 26%,
+        rgba(0,0,0,0.88) 38%,
+        rgba(0,0,0,0.42) 50%,
+        rgba(0,0,0,0.10) 58%,
+        rgba(0,0,0,0.0) 66%
+      );
+      -webkit-mask-image: linear-gradient(
+        to top,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 26%,
+        rgba(0,0,0,0.88) 38%,
+        rgba(0,0,0,0.42) 50%,
+        rgba(0,0,0,0.10) 58%,
+        rgba(0,0,0,0.0) 66%
+      );
+    }
+
+    .code-lines {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: 2px;
+    }
+
+    .code-line {
+      font-family: "Courier New", Courier, monospace;
+      font-size: clamp(14px, 1.08vw, 18px);
+      line-height: 1.5;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-shadow:
+        0 0 10px rgba(77,255,218,0.18),
+        0 0 18px rgba(96,215,255,0.08);
+      animation: lineFlicker 7s infinite;
+      transform: translateY(0);
+      opacity: 1;
+      transition:
+        transform 2.8s linear,
+        opacity 2.8s linear;
+    }
+
+    .code-line.dim    { color: rgba(210,255,245,0.52); }
+    .code-line.green  { color: rgba(110,255,174,0.92); }
+    .code-line.cyan   { color: rgba(92,229,255,0.94); }
+    .code-line.white  { color: rgba(236,255,251,0.92); }
+    .code-line.alert  { color: rgba(160,255,122,0.92); }
 
     @keyframes slowSpin {
       from { transform: rotate(0deg); }
@@ -413,17 +362,19 @@
 
     @media (max-width: 900px) {
       .code-zone {
-        width: 48vw;
-        padding: 100px 20px 24px 20px;
-      }
-
-      .code-header {
+        width: 46vw;
+        height: 48vh;
         left: 20px;
+        bottom: 20px;
       }
 
       .hud {
         right: 18px;
         top: 82px;
+      }
+
+      .timeline-link {
+        right: 220px;
       }
     }
 
@@ -434,19 +385,18 @@
       }
 
       .timeline-link {
-        right: 16px;
+        right: 140px;
         bottom: 16px;
       }
 
       .code-zone {
         width: 62vw;
-        min-width: 0;
-        max-width: none;
-        padding: 88px 16px 22px 16px;
+        height: 44vh;
+        left: 16px;
+        bottom: 16px;
       }
 
       .code-header {
-        left: 16px;
         font-size: 10px;
       }
 
@@ -476,7 +426,6 @@
     <section class="map-stage">
       <img class="map-image" src="images/SAmap.png" alt="South Australia map graphic" />
       <div class="map-glow" aria-hidden="true"></div>
-      <div class="sea-vignette" aria-hidden="true"></div>
       <div class="scanline-flash" aria-hidden="true"></div>
       <div class="dust" aria-hidden="true"></div>
 
@@ -490,7 +439,6 @@
         <div class="code-stream">
           <div class="code-lines" id="codeLines"></div>
         </div>
-        <div class="code-fade" aria-hidden="true"></div>
       </section>
     </section>
   </main>
@@ -591,8 +539,7 @@
     ];
 
     const colorClasses = ['dim', 'green', 'cyan', 'white', 'alert'];
-    const lines = [];
-    let offset = 0;
+    const maxLines = 18;
 
     function makeLine() {
       const line = document.createElement('div');
@@ -602,57 +549,27 @@
       return line;
     }
 
-    function populateInitialLines() {
-      while (codeLines.offsetHeight < window.innerHeight * 1.15) {
-        const line = makeLine();
-        codeLines.prepend(line);
-        lines.unshift(line);
-      }
-    }
-
-    function addNewLine() {
+    function addLine() {
       const line = makeLine();
       codeLines.appendChild(line);
-      lines.push(line);
+
+      const allLines = Array.from(codeLines.children);
+
+      if (allLines.length > maxLines) {
+        const first = allLines[0];
+        first.style.opacity = '0';
+        first.style.transform = 'translateY(-12px)';
+        setTimeout(() => {
+          if (first.parentNode) first.remove();
+        }, 2800);
+      }
     }
 
-    function updateStream() {
-      offset += 0.34;
-      codeLines.style.transform = `translateY(-${offset}px)`;
-
-      if (lines.length) {
-        const last = lines[lines.length - 1];
-        const lastRect = last.getBoundingClientRect();
-        if (window.innerHeight - lastRect.bottom > 6) {
-          addNewLine();
-        }
-      }
-
-      while (lines.length) {
-        const first = lines[0];
-        const rect = first.getBoundingClientRect();
-        if (rect.bottom < window.innerHeight * 0.33) {
-          first.remove();
-          lines.shift();
-        } else {
-          break;
-        }
-      }
-
-      requestAnimationFrame(updateStream);
+    for (let i = 0; i < 10; i++) {
+      addLine();
     }
 
-    window.addEventListener('load', () => {
-      populateInitialLines();
-      for (let i = 0; i < 10; i++) addNewLine();
-      updateStream();
-    });
-
-    window.addEventListener('resize', () => {
-      if (lines.length < 12) {
-        populateInitialLines();
-      }
-    });
+    setInterval(addLine, 2400);
   </script>
 </body>
 </html>
