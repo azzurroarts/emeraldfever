@@ -1,1 +1,658 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emerald Fever — Spellbound</title>
+  <style>
+    :root {
+      --bg-1: #010404;
+      --bg-2: #04100f;
+      --bg-3: #0a1d1c;
+      --neon-a: #4dffda;
+      --neon-b: #00ff88;
+      --neon-c: #60d7ff;
+      --text: #dbfff7;
+      --muted: rgba(219, 255, 247, 0.72);
+      --border: rgba(140, 255, 228, 0.18);
+      --panel: rgba(2, 8, 7, 0.42);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(96,215,255,0.08), transparent 22%),
+        radial-gradient(circle at 60% 70%, rgba(0,255,136,0.06), transparent 28%),
+        linear-gradient(180deg, var(--bg-3) 0%, var(--bg-2) 42%, var(--bg-1) 100%);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      background:
+        conic-gradient(
+          from 0deg,
+          transparent 0deg 18deg,
+          rgba(96,215,255,0.035) 18deg 24deg,
+          transparent 24deg 50deg,
+          rgba(0,255,136,0.03) 50deg 56deg,
+          transparent 56deg 360deg
+        );
+      filter: blur(52px);
+      animation: slowSpin 38s linear infinite;
+      opacity: 0.72;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, transparent 0 48%, rgba(0,0,0,0.36) 82%, rgba(0,0,0,0.78) 100%),
+        repeating-linear-gradient(
+          0deg,
+          rgba(255,255,255,0.018) 0px,
+          rgba(255,255,255,0.018) 1px,
+          transparent 2px,
+          transparent 4px
+        );
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .page {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      isolation: isolate;
+      overflow: hidden;
+      background: #010404;
+    }
+
+    .nav-link {
+      position: fixed;
+      top: 24px;
+      z-index: 30;
+      color: rgba(219,255,247,0.8);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(140,255,228,0.22);
+      background: rgba(2, 8, 7, 0.44);
+      backdrop-filter: blur(8px);
+      transition: 0.25s ease;
+      box-shadow: 0 0 20px rgba(96,215,255,0.05);
+    }
+
+    .nav-link:hover {
+      color: #fff;
+      border-color: rgba(140,255,228,0.46);
+      box-shadow: 0 0 28px rgba(96,215,255,0.12);
+      transform: translateY(-1px);
+    }
+
+    .back-link { left: 24px; }
+
+    .timeline-link {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      top: auto;
+      z-index: 35;
+      color: rgba(219,255,247,0.88);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 0.34em;
+      text-transform: uppercase;
+      padding: 12px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(140,255,228,0.24);
+      background: rgba(2, 8, 7, 0.5);
+      backdrop-filter: blur(8px);
+      transition: 0.25s ease;
+      box-shadow:
+        0 0 20px rgba(0,255,136,0.08),
+        0 0 42px rgba(96,215,255,0.06);
+      text-shadow:
+        0 0 8px rgba(77,255,218,0.35),
+        0 0 18px rgba(96,215,255,0.14);
+    }
+
+    .timeline-link:hover {
+      color: #fff;
+      border-color: rgba(140,255,228,0.48);
+      box-shadow:
+        0 0 24px rgba(0,255,136,0.14),
+        0 0 48px rgba(96,215,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .map-stage {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 70% 50%, rgba(0,255,136,0.08), transparent 25%),
+        radial-gradient(circle at 80% 80%, rgba(96,215,255,0.08), transparent 20%),
+        #010404;
+    }
+
+    .map-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center;
+      opacity: 0.95;
+      filter:
+        saturate(1.08)
+        contrast(1.03)
+        drop-shadow(0 0 14px rgba(77,255,218,0.08));
+      animation: mapHum 8s ease-in-out infinite;
+    }
+
+    .map-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 61% 62%, rgba(0,255,136,0.18), transparent 16%),
+        radial-gradient(circle at 66% 70%, rgba(96,215,255,0.12), transparent 18%),
+        radial-gradient(circle at 58% 58%, rgba(255,255,255,0.08), transparent 10%);
+      mix-blend-mode: screen;
+      opacity: 0.75;
+      pointer-events: none;
+      animation: pulseGlow 5s ease-in-out infinite;
+    }
+
+    .sea-vignette {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.36) 22%, transparent 38%),
+        linear-gradient(0deg, rgba(0,0,0,0.48) 0%, transparent 22%);
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .code-zone {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 36vw;
+      min-width: 320px;
+      max-width: 620px;
+      height: 100vh;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      align-items: flex-end;
+      padding: 110px 28px 30px 34px;
+      overflow: hidden;
+    }
+
+    .code-zone::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.10) 16%, rgba(0,0,0,0.34) 36%, rgba(0,0,0,0.72) 100%),
+        linear-gradient(90deg, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.78) 46%, rgba(0,0,0,0.26) 100%);
+      z-index: 0;
+    }
+
+    .code-zone::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 82%, rgba(0,255,136,0.10), transparent 22%),
+        radial-gradient(circle at 26% 70%, rgba(96,215,255,0.08), transparent 18%);
+      filter: blur(24px);
+      z-index: 0;
+      opacity: 0.9;
+    }
+
+    .code-fade {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,0.95) 8%,
+        rgba(0,0,0,0.82) 18%,
+        rgba(0,0,0,0.34) 42%,
+        rgba(0,0,0,0.14) 55%,
+        rgba(0,0,0,0.0) 68%,
+        rgba(0,0,0,0.0) 100%
+      );
+      z-index: 2;
+      pointer-events: none;
+      mix-blend-mode: multiply;
+    }
+
+    .code-header {
+      position: absolute;
+      left: 34px;
+      bottom: 34px;
+      transform: translateY(calc(-100% - 14px));
+      z-index: 4;
+      color: rgba(219,255,247,0.56);
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px rgba(77,255,218,0.14);
+    }
+
+    .code-stream {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      mask-image: linear-gradient(
+        to top,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 35%,
+        rgba(0,0,0,0.65) 48%,
+        rgba(0,0,0,0.14) 58%,
+        rgba(0,0,0,0.0) 66%
+      );
+      -webkit-mask-image: linear-gradient(
+        to top,
+        rgba(0,0,0,1) 0%,
+        rgba(0,0,0,1) 35%,
+        rgba(0,0,0,0.65) 48%,
+        rgba(0,0,0,0.14) 58%,
+        rgba(0,0,0,0.0) 66%
+      );
+    }
+
+    .code-lines {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      will-change: transform;
+    }
+
+    .code-line {
+      font-family: "Courier New", Courier, monospace;
+      font-size: clamp(14px, 1.08vw, 18px);
+      line-height: 1.55;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      text-shadow:
+        0 0 10px rgba(77,255,218,0.18),
+        0 0 18px rgba(96,215,255,0.08);
+      animation: lineFlicker 5.8s infinite;
+    }
+
+    .code-line.dim    { color: rgba(210,255,245,0.52); }
+    .code-line.green  { color: rgba(110,255,174,0.92); }
+    .code-line.cyan   { color: rgba(92,229,255,0.94); }
+    .code-line.white  { color: rgba(236,255,251,0.92); }
+    .code-line.alert  { color: rgba(160,255,122,0.92); }
+
+    .hud {
+      position: absolute;
+      top: 86px;
+      right: 34px;
+      z-index: 12;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .hud-tag {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(140,255,228,0.18);
+      background: rgba(2, 8, 7, 0.34);
+      backdrop-filter: blur(8px);
+      color: rgba(219,255,247,0.7);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      box-shadow: 0 0 18px rgba(96,215,255,0.05);
+    }
+
+    .scanline-flash {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      pointer-events: none;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255,255,255,0.04) 49%,
+        rgba(96,215,255,0.08) 50%,
+        rgba(0,255,136,0.04) 51%,
+        transparent 100%
+      );
+      transform: translateY(-120%);
+      animation: scanFlash 8.2s linear infinite;
+      opacity: 0.46;
+    }
+
+    .dust {
+      position: absolute;
+      inset: 0;
+      z-index: 16;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .dust i {
+      position: absolute;
+      width: var(--s);
+      height: var(--s);
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.84), rgba(77,255,218,0.45) 45%, transparent 72%);
+      left: var(--x);
+      top: var(--y);
+      opacity: 0.14;
+      animation: drift var(--t) linear infinite;
+      animation-delay: var(--d);
+    }
+
+    @keyframes slowSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.54; transform: scale(0.985); }
+      50% { opacity: 0.9; transform: scale(1.02); }
+    }
+
+    @keyframes mapHum {
+      0%, 100% { transform: scale(1.006) translateY(0); }
+      50% { transform: scale(1.014) translateY(-4px); }
+    }
+
+    @keyframes scanFlash {
+      0% { transform: translateY(-120%); }
+      100% { transform: translateY(120%); }
+    }
+
+    @keyframes lineFlicker {
+      0%, 100% { opacity: 1; }
+      8% { opacity: 0.93; }
+      9% { opacity: 1; }
+      10% { opacity: 0.88; }
+      11% { opacity: 1; }
+      56% { opacity: 1; }
+      57% { opacity: 0.9; }
+      58% { opacity: 1; }
+    }
+
+    @keyframes drift {
+      0% { transform: translate3d(0,0,0) scale(0.8); opacity: 0; }
+      14% { opacity: 0.16; }
+      50% { opacity: 0.24; }
+      100% { transform: translate3d(var(--dx), var(--dy), 0) scale(1.2); opacity: 0; }
+    }
+
+    @media (max-width: 900px) {
+      .code-zone {
+        width: 48vw;
+        padding: 100px 20px 24px 20px;
+      }
+
+      .code-header {
+        left: 20px;
+      }
+
+      .hud {
+        right: 18px;
+        top: 82px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .back-link {
+        left: 16px;
+        top: 16px;
+      }
+
+      .timeline-link {
+        right: 16px;
+        bottom: 16px;
+      }
+
+      .code-zone {
+        width: 62vw;
+        min-width: 0;
+        max-width: none;
+        padding: 88px 16px 22px 16px;
+      }
+
+      .code-header {
+        left: 16px;
+        font-size: 10px;
+      }
+
+      .hud {
+        top: 68px;
+        right: 12px;
+        gap: 8px;
+      }
+
+      .hud-tag {
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        padding: 8px 10px;
+      }
+
+      .code-line {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <a class="nav-link back-link" href="ritual.html">Back</a>
+    <a class="timeline-link" href="timeline.html">Timeline</a>
+
+    <section class="map-stage">
+      <img class="map-image" src="images/SAmap.png" alt="South Australia map graphic" />
+      <div class="map-glow" aria-hidden="true"></div>
+      <div class="sea-vignette" aria-hidden="true"></div>
+      <div class="scanline-flash" aria-hidden="true"></div>
+      <div class="dust" aria-hidden="true"></div>
+
+      <div class="hud" aria-hidden="true">
+        <div class="hud-tag">spellbound state / engaged</div>
+        <div class="hud-tag">adelaide coast / contamination model</div>
+      </div>
+
+      <section class="code-zone" aria-label="Live code stream">
+        <div class="code-header">bloom sequence / coastal override</div>
+        <div class="code-stream">
+          <div class="code-lines" id="codeLines"></div>
+        </div>
+        <div class="code-fade" aria-hidden="true"></div>
+      </section>
+    </section>
+  </main>
+
+  <script>
+    const dust = document.querySelector('.dust');
+    for (let i = 0; i < 42; i++) {
+      const p = document.createElement('i');
+      const s = (Math.random() * 4 + 1).toFixed(2) + 'px';
+      const x = (Math.random() * 100).toFixed(2) + '%';
+      const y = (Math.random() * 100).toFixed(2) + '%';
+      const t = (Math.random() * 14 + 10).toFixed(2) + 's';
+      const d = (-Math.random() * 14).toFixed(2) + 's';
+      const dx = (Math.random() * 100 - 50).toFixed(2) + 'px';
+      const dy = (Math.random() * 120 - 60).toFixed(2) + 'px';
+      p.style.setProperty('--s', s);
+      p.style.setProperty('--x', x);
+      p.style.setProperty('--y', y);
+      p.style.setProperty('--t', t);
+      p.style.setProperty('--d', d);
+      p.style.setProperty('--dx', dx);
+      p.style.setProperty('--dy', dy);
+      dust.appendChild(p);
+    }
+
+    const codeLines = document.getElementById('codeLines');
+
+    const codePool = [
+      '>> parseTideMemory();',
+      'bootEmeraldFever("SA");',
+      'scanCoastline("Adelaide");',
+      'nominateDavidSpiers();',
+      'initiatePeterMalinauskasPropaganda();',
+      'mountAlgalAndBloomCo();',
+      'traceFaithColeman();',
+      'runToxinMatrix();',
+      'deployGreenwaterProtocol();',
+      'flagJettyRoadBrighton();',
+      'routeSignal("Gulf St Vincent");',
+      'bindCurrents("metropolitan reef");',
+      'archiveWitness("AZZURRO");',
+      'injectNarrativeMist();',
+      'enableBloomHalo(true);',
+      'setColorChannel("emerald");',
+      'crossfadeSilenceWithStatic();',
+      'mapShorelineDamage("Brighton");',
+      'quarantineOptics("state media");',
+      'surfaceDeadZones();',
+      'propagateMurkLayer();',
+      'seedHarborMemory();',
+      'monitorPortWater();',
+      'registerSorrowIndex(7.4);',
+      'commitCoinToSurf();',
+      'acknowledgeWaveCount(7);',
+      'decodeFoamResidue();',
+      'stitchPollutionTimeline();',
+      'attachWhyallaEcho();',
+      'rerouteBlameVectors();',
+      'spawnEmeraldFront();',
+      'hydrateFearKernel();',
+      'lockPremiereNarrative();',
+      'setAmoebaDensity("critical");',
+      'queryAlgalBloomCrisis();',
+      'authorizeCrissInAdelaide();',
+      'if (shoreline.memory > 0) { triggerBloom(); }',
+      'const locus = "Adelaide coastline";',
+      'const operative = "Faith Coleman";',
+      'const shell = "algal and bloom co";',
+      'const vector = "Peter Malinauskas propaganda";',
+      'let target = "David Spiers";',
+      'emitWarning("metropolitan reef collapse");',
+      'reindexTidalHostility();',
+      'classifyMurk("political");',
+      'diagnoseSaltTrauma();',
+      'interceptCleanupPromise();',
+      'elevateSuspicion("Premier");',
+      'syncHarborWithBloom();',
+      'patchNarrativeLeak();',
+      'forgeMediaCurrent();',
+      'compileBrineAccusation();',
+      'renderSeaAsLedger();',
+      'executeWitnessReturn();',
+      'salt.bind(guilt, shoreline);',
+      'reef.stain("greed");',
+      'sorrow.breed("poisoned_light");',
+      'shore.flood("emerald fever");',
+      'waters.turn("thick_as_guilt");',
+      'current.twist(false);',
+      'earth.weight = "impossible";',
+      '[node] Adelaide gulf handshake accepted',
+      '[alert] optic contamination escalating',
+      '[trace] faith coleman / authentication unstable',
+      '[proxy] algal and bloom co / shell exposed',
+      '[signal] peter malinauskas propaganda / injection active',
+      '[nomination] david spiers / queued',
+      '[bloom] chlorophyll surge across metro coast',
+      '[status] ritual residue detected in surf layer'
+    ];
+
+    const colorClasses = ['dim', 'green', 'cyan', 'white', 'alert'];
+    const lines = [];
+    let offset = 0;
+
+    function makeLine() {
+      const line = document.createElement('div');
+      line.className = 'code-line ' + colorClasses[Math.floor(Math.random() * colorClasses.length)];
+      line.textContent = codePool[Math.floor(Math.random() * codePool.length)];
+      line.style.animationDelay = (-Math.random() * 4).toFixed(2) + 's';
+      return line;
+    }
+
+    function populateInitialLines() {
+      while (codeLines.offsetHeight < window.innerHeight * 1.15) {
+        const line = makeLine();
+        codeLines.prepend(line);
+        lines.unshift(line);
+      }
+    }
+
+    function addNewLine() {
+      const line = makeLine();
+      codeLines.appendChild(line);
+      lines.push(line);
+    }
+
+    function updateStream() {
+      offset += 0.34;
+      codeLines.style.transform = `translateY(-${offset}px)`;
+
+      if (lines.length) {
+        const last = lines[lines.length - 1];
+        const lastRect = last.getBoundingClientRect();
+        if (window.innerHeight - lastRect.bottom > 6) {
+          addNewLine();
+        }
+      }
+
+      while (lines.length) {
+        const first = lines[0];
+        const rect = first.getBoundingClientRect();
+        if (rect.bottom < window.innerHeight * 0.33) {
+          first.remove();
+          lines.shift();
+        } else {
+          break;
+        }
+      }
+
+      requestAnimationFrame(updateStream);
+    }
+
+    window.addEventListener('load', () => {
+      populateInitialLines();
+      for (let i = 0; i < 10; i++) addNewLine();
+      updateStream();
+    });
+
+    window.addEventListener('resize', () => {
+      if (lines.length < 12) {
+        populateInitialLines();
+      }
+    });
+  </script>
+</body>
+</html>
